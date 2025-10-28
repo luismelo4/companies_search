@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Admin - Company Import</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  </head>
+
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card mt-4">
+            <div class="card-header bg-danger text-white">
+              <h1 class="h3 mb-0">
+                <i class="bi bi-gear"></i> Admin Panel - Company Import
+              </h1>
+            </div>
+            <div class="card-body">
+              <!-- Flash Messages -->
+              <% if flash[:success] %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                  <i class="bi bi-check-circle"></i> <%= flash[:success] %>
+                  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+              <% end %>
+              
+              <% if flash[:error] %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                  <i class="bi bi-exclamation-triangle"></i> <%= flash[:error] %>
+                  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+              <% end %>
+
+              <!-- Database Status -->
+              <div class="row mb-4">
+                <div class="col-md-6">
+                  <div class="card bg-light">
+                    <div class="card-body">
+                      <h5 class="card-title">
+                        <i class="bi bi-database"></i> Database Status
+                      </h5>
+                      <p class="card-text">
+                        <strong>Total Companies:</strong> <%= @companies_count %>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="card bg-light">
+                    <div class="card-body">
+                      <h5 class="card-title">
+                        <i class="bi bi-info-circle"></i> Instructions
+                      </h5>
+                      <p class="card-text">
+                        Upload a CSV file with companies data. The file should have columns: 
+                        <code>coc_number</code>, <code>company_name</code>, <code>city</code>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- CSV Upload Form -->
+              <div class="row">
+                <div class="col-md-8">
+                  <div class="card">
+                    <div class="card-header">
+                      <h5 class="mb-0">
+                        <i class="bi bi-upload"></i> Import Companies from CSV
+                      </h5>
+                    </div>
+                    <div class="card-body">
+                      <%= form_with url: admin_import_csv_path, method: :post, multipart: true, local: true, class: "mb-3" do |form| %>
+                        <div class="mb-3">
+                          <label for="csv_file" class="form-label">Select CSV File</label>
+                          <%= form.file_field :csv_file, class: "form-control", accept: ".csv", required: true %>
+                          <div class="form-text">
+                            <i class="bi bi-info-circle"></i> 
+                            CSV file should be semicolon-separated with headers: coc_number, company_name, city
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                          <%= form.submit "Import CSV", class: "btn btn-primary btn-lg" %>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="col-md-4">
+                  <div class="card">
+                    <div class="card-header">
+                      <h5 class="mb-0">
+                        <i class="bi bi-trash"></i> Database Actions
+                      </h5>
+                    </div>
+                    <div class="card-body">
+                      <p class="card-text">
+                        <strong>Warning:</strong> This will permanently delete all company data.
+                      </p>
+                      <%= form_with url: admin_clear_data_path, method: :post, local: true, 
+                          data: { confirm: "Are you sure you want to clear all company data? This action cannot be undone!" } do |form| %>
+                        <%= form.submit "Clear All Data", class: "btn btn-danger" %>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Navigation -->
+              <div class="row mt-4">
+                <div class="col-12">
+                  <div class="d-flex justify-content-between">
+                    <a href="/" class="btn btn-outline-primary">
+                      <i class="bi bi-house"></i> Back to Search
+                    </a>
+                    <a href="/admin" class="btn btn-outline-secondary">
+                      <i class="bi bi-arrow-clockwise"></i> Refresh
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
